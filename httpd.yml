@@ -1,0 +1,35 @@
+- name: port번호 바꾸기
+  hosts: all
+  become: yes
+  gather_facts: yes
+  vars_files:
+    vars.yml
+
+  tasks:
+    - name: httpd 설치확인
+      yum:
+        name: httpd
+        state: present
+
+    - name: port번호 바꾸기
+      lineinfile:
+        dest: /etc/httpd/conf/httpd.conf
+        regexp: '^Listen [0-9]{1,5}$:Q'
+        line: Listen {{webport}}
+        validate: httpd -t -f %s
+      notify:
+        - restartweb
+
+    - name: append index.html
+      blockinfile:
+        dest: /var/www/html/index.html
+        block: |
+          [test page]
+          - hi
+          - hello
+
+  handlers:
+    - name: restartweb
+      service:
+        name: httpd
+        state: restarted
