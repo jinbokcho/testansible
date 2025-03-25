@@ -17,6 +17,6 @@
       service: name=nginx state=stopped
       when: ansible_distribution == 'Ubuntu'
 
-    - name: Ubuntu > remove httpd
+    - name: Ubuntu > remove nginx
       action: "{{ ansible_pkg_mgr }} name=nginx state=absent purge=yes autoremove=yes"
       when: ansible_distribution == 'Ubuntu'
